@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
 import 'package:habit_tracker_atomic/presentation/pages/splash/splash_page.dart';
@@ -8,6 +9,7 @@ import 'package:habit_tracker_atomic/presentation/theme/app_theme.dart';
 void main() {
   Get.put(
       HabitController()); // Inyecta el controlador antes de que la aplicación comience
+  Get.put(AuthController());
   runApp(MyApp());
 }
 

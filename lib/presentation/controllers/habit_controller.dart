@@ -26,6 +26,10 @@ class Habit {
   double getProgressPercentage() {
     return progress / target;
   }
+
+  String toString() {
+    return 'Habit(name: $name, progress: $progress, target: $target, unit: $unit, emoji: $emoji, isCompleted: $isCompleted, isSkipped: $isSkipped, isFailed: $isFailed)';
+  }
 }
 
 class HabitController extends GetxController {

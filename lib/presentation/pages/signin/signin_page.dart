@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
 import 'package:habit_tracker_atomic/presentation/pages/home/home_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 import 'package:habit_tracker_atomic/presentation/widgets/appbar/basic_appbar.dart';
@@ -26,7 +28,7 @@ class _SignInPageState extends State<SignInPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/logo.png', // Asegúrate de que la ruta sea correcta
+              'assets/images/logo.png',
               width: 100,
               height: 100,
             ),
@@ -52,8 +54,6 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             SizedBox(height: 30),
-
-            // Campo para el nombre de usuario o email
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -73,8 +73,6 @@ class _SignInPageState extends State<SignInPage> {
               cursorColor: AppColors.primario,
             ),
             SizedBox(height: 20),
-
-            // Campo para la contraseña
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -97,18 +95,27 @@ class _SignInPageState extends State<SignInPage> {
               cursorColor: AppColors.primario,
             ),
             SizedBox(height: 30),
-
-            // Botón "Sign In"
             ElevatedButton(
               onPressed: () {
-                // Navegamos a la HomePage pasando el nombre de usuario
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        HomePage(username: _usernameController.text),
-                  ),
-                );
+                if (_usernameController.text.isNotEmpty &&
+                    _passwordController.text.isNotEmpty) {
+                  Get.find<AuthController>().loginUser(
+                    _usernameController.text,
+                    _passwordController.text,
+                  );
+                  if (Get.find<AuthController>().isLoggedIn()) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            HomePage(username: _usernameController.text),
+                      ),
+                    );
+                  }
+                } else {
+                  Get.snackbar(
+                      'Error', 'Por favor ingrese los datos de acceso.');
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primario,

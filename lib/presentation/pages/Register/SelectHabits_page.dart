@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
+import 'package:habit_tracker_atomic/presentation/pages/LoginORegister/LoginORegister_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 import 'package:habit_tracker_atomic/presentation/widgets/appbar/basic_appbar.dart';
 import 'package:habit_tracker_atomic/presentation/pages/home/home_page.dart';
@@ -93,6 +95,7 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
                         } else {
                           selectedHabits.add(habit['name']!);
                         }
+                        print("Selected Habits: $selectedHabits");
                       });
                     },
                     child: Container(
@@ -155,15 +158,18 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
                       emoji: habit['emoji']!,
                     );
                   }).toList();
+                  // Guardar los hábitos seleccionados en el usuario actual
+                  print("Selected Habits Objects: $userSelectedHabits");
 
-                  // Establecemos los hábitos seleccionados en el controlador
-                  Get.find<HabitController>()
-                      .setSelectedHabits(userSelectedHabits);
+                  for (var habit in userSelectedHabits) {
+                    Get.find<AuthController>().addHabitToCurrentUser(habit);
+                  }
+                  Get.find<AuthController>().logoutUser();
 
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => HomePage(username: 'User')),
+                        builder: (context) => LoginORegisterPage()),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

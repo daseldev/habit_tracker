@@ -1,44 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
 import 'package:habit_tracker_atomic/presentation/pages/Register/GenderSkinHair_page.dart';
 import 'package:habit_tracker_atomic/presentation/pages/signin/signin_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 import 'package:habit_tracker_atomic/presentation/widgets/appbar/basic_appbar.dart';
 
 class RegisterPage extends StatelessWidget {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: const BasicAppBar(), // Usamos BasicAppBar
+      appBar: const BasicAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo de la aplicación
             Image.asset(
-              'assets/images/logo.png', // Asegúrate de que la ruta sea correcta
+              'assets/images/logo.png',
               width: 100,
               height: 100,
             ),
             SizedBox(height: 40),
-
-            // Título "Register"
             Text(
               "Register",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: isDarkMode
-                    ? AppColors.fondoClaro
-                    : AppColors.grisOscuro, // Color dinámico
+                color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
-
-            // Texto de ayuda
             GestureDetector(
               onTap: () {
                 // Acción para "Click Here"
@@ -47,56 +46,49 @@ class RegisterPage extends StatelessWidget {
                 "If You Need Any Support Click Here",
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.primario, // Usamos el color primario (oro)
+                  color: AppColors.primario,
                 ),
               ),
             ),
             SizedBox(height: 30),
-
-            // Campo para el nombre completo
             TextField(
+              controller: nameController,
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 labelStyle: TextStyle(
                     color: isDarkMode ? AppColors.gris : AppColors.grisOscuro),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide:
-                      BorderSide(color: AppColors.gris), // Borde gris claro
+                  borderSide: BorderSide(color: AppColors.gris),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                      color: AppColors.primario), // Borde dorado al enfocarse
+                  borderSide: BorderSide(color: AppColors.primario),
                 ),
               ),
-              cursorColor: AppColors.primario, // Cursor dorado
+              cursorColor: AppColors.primario,
             ),
             SizedBox(height: 20),
-
-            // Campo para el email
             TextField(
+              controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Enter Email',
                 labelStyle: TextStyle(
                     color: isDarkMode ? AppColors.gris : AppColors.grisOscuro),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide:
-                      BorderSide(color: AppColors.gris), // Borde gris claro
+                  borderSide: BorderSide(color: AppColors.gris),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                      color: AppColors.primario), // Borde dorado al enfocarse
+                  borderSide: BorderSide(color: AppColors.primario),
                 ),
               ),
-              cursorColor: AppColors.primario, // Cursor dorado
+              cursorColor: AppColors.primario,
             ),
             SizedBox(height: 20),
-
-            // Campo para la contraseña
             TextField(
+              controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -106,30 +98,43 @@ class RegisterPage extends StatelessWidget {
                     Icon(Icons.visibility_off, color: AppColors.grisOscuro),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide:
-                      BorderSide(color: AppColors.gris), // Borde gris claro
+                  borderSide: BorderSide(color: AppColors.gris),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                      color: AppColors.primario), // Borde dorado al enfocarse
+                  borderSide: BorderSide(color: AppColors.primario),
                 ),
               ),
               cursorColor: AppColors.primario,
             ),
             SizedBox(height: 30),
-
-            // Botón "Create Account"
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GenderSkinHairPage()),
-                );
+                if (nameController.text.isNotEmpty &&
+                    emailController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty) {
+                  Get.find<AuthController>().registerUser(
+                    nameController.text,
+                    emailController.text,
+                    passwordController.text,
+                    'Male', // Asumimos que se selecciona el género en una página anterior
+                    '🧑🏻', // Asumimos que se selecciona el color de piel en una página anterior
+                    '🧑‍🦳', // Asumimos que se selecciona el color de pelo en una página anterior
+                  );
+                  Get.find<AuthController>()
+                      .loginUser(nameController.text, passwordController.text);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GenderSkinHairPage()),
+                  );
+                } else {
+                  Get.snackbar('Error', 'Por favor complete todos los campos.');
+                }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    AppColors.primario, // Color dorado para el botón
+                backgroundColor: AppColors.primario,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -140,14 +145,11 @@ class RegisterPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white, // Texto en blanco
+                  color: Colors.white,
                 ),
               ),
             ),
-
             SizedBox(height: 30),
-
-            // Texto para redirigir a "Sign In"
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -159,7 +161,6 @@ class RegisterPage extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navegar a la página de inicio de sesión
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => SignInPage()),
@@ -178,9 +179,8 @@ class RegisterPage extends StatelessWidget {
           ],
         ),
       ),
-      backgroundColor: isDarkMode
-          ? AppColors.fondoOscuro
-          : AppColors.fondoClaro, // Fondo dinámico según el tema
+      backgroundColor:
+          isDarkMode ? AppColors.fondoOscuro : AppColors.fondoClaro,
     );
   }
 }

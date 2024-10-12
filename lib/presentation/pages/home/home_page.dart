@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 
@@ -22,22 +23,20 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildGreetingSection(
-                  context, isDarkMode), // Pasar el contexto aquí
+              _buildGreetingSection(context, isDarkMode),
               SizedBox(height: 20),
-              _buildDateSelector(isDarkMode), // El selector de fechas
+              _buildDateSelector(isDarkMode),
               SizedBox(height: 20),
               _buildProgressSection(isDarkMode),
               SizedBox(height: 20),
               _buildChallengeSection(isDarkMode),
               SizedBox(height: 20),
-              _buildHabitsSection(
-                  isDarkMode, context), // Los hábitos para el día seleccionado
+              _buildHabitsSection(isDarkMode, context),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
@@ -70,7 +69,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Saludo personalizado con cambio a "Calendar"
+  // Saludo personalizado
   Widget _buildGreetingSection(BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,12 +169,10 @@ class HomePage extends StatelessWidget {
   // Sección de progreso diario
   Widget _buildProgressSection(bool isDarkMode) {
     return Obx(() {
-      // Calculamos el porcentaje de hábitos completados
       double completedPercentage =
           habitController.calculateCompletedPercentage();
       String message = "No progress yet. Let's get started!";
 
-      // Definir el mensaje según el porcentaje de progreso
       if (completedPercentage == 0.0) {
         message = "Let's get started! You haven't completed any habits yet.";
       } else if (completedPercentage > 0.0 && completedPercentage < 0.25) {
@@ -202,7 +199,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              message, // Muestra el mensaje basado en el porcentaje
+              message,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -211,8 +208,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             LinearProgressIndicator(
-              value:
-                  completedPercentage, // Valor del progreso basado en los hábitos completados
+              value: completedPercentage,
               backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
               color: AppColors.primario,
             ),
@@ -300,34 +296,34 @@ class HomePage extends StatelessWidget {
   // Sección de hábitos
   Widget _buildHabitsSection(bool isDarkMode, BuildContext context) {
     return Obx(() {
+      // Obtener los hábitos del usuario autenticado
+      var currentUserHabits = Get.find<AuthController>().getCurrentUserHabits();
+      print(
+          "Current User Habits: ${currentUserHabits.map((habit) => habit.name).toList()}");
+
+      if (currentUserHabits.isEmpty) {
+        return Text(
+          "No habits for today",
+          style: TextStyle(
+            color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+          ),
+        );
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                "Habits",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color:
-                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
-                ),
-              ),
-              Spacer(),
-              TextButton(
-                onPressed: () {
-                  // Acción al ver todos los hábitos
-                },
-                child: Text(
-                  "View all",
-                  style: TextStyle(color: AppColors.primario),
-                ),
-              ),
-            ],
+          Text(
+            "Habits",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+            ),
           ),
+          SizedBox(height: 10),
           Column(
-            children: habitController.getHabitsForSelectedDay().map((habit) {
+            children: currentUserHabits.map((habit) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Container(
@@ -368,17 +364,6 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (habit.isFailed)
-                        Icon(Icons.close, color: Colors.red)
-                      else if (habit.isCompleted || habit.isSkipped)
-                        Icon(Icons.check, color: AppColors.primario)
-                      else
-                        IconButton(
-                          icon: Icon(Icons.add, color: AppColors.primario),
-                          onPressed: () {
-                            _showHabitOptionsDialog(context, habit);
-                          },
-                        ),
                     ],
                   ),
                 ),
@@ -442,12 +427,18 @@ class HomePage extends StatelessWidget {
   }
 
   // Barra de navegación inferior
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: 0, // Página activa (Home por defecto)
       onTap: (index) {
-        if (index == 1) {
+        if (index == 0) {
+          // Home, no hace nada porque estamos en la HomePage
+        } else if (index == 1) {
           _showAddHabitDialog(); // Mostrar el diálogo de agregar hábito cuando se selecciona "Add"
+        } else if (index == 2) {
+          // Perfil: Acción para cerrar sesión
+          Get.find<AuthController>().logoutUser(); // Cerrar sesión
+          Navigator.pop(context); // Regresar al inicio de sesión
         }
       },
       items: [
@@ -475,8 +466,7 @@ class HomePage extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController targetController = TextEditingController();
     final TextEditingController unitController = TextEditingController();
-    final TextEditingController emojiController =
-        TextEditingController(); // Nuevo controlador para el emoji
+    final TextEditingController emojiController = TextEditingController();
 
     showDialog(
       context: Get.context!,
@@ -512,7 +502,7 @@ class HomePage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Get.back(); // Cerrar el diálogo sin agregar
+                Get.back();
               },
               child: Text('Cancel'),
             ),
@@ -524,14 +514,13 @@ class HomePage extends StatelessWidget {
                     emojiController.text.isNotEmpty) {
                   double? targetValue = double.tryParse(targetController.text);
                   if (targetValue != null) {
-                    // Llamar a la función para agregar el nuevo hábito con el emoji ingresado por el usuario
                     habitController.addNewHabit(
                       nameController.text,
                       targetValue,
                       unitController.text,
                       emojiController.text,
                     );
-                    Get.back(); // Cerrar el diálogo
+                    Get.back();
                   } else {
                     Get.snackbar('Error', 'Please enter a valid target value');
                   }
