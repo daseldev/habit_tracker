@@ -434,7 +434,8 @@ class HomePage extends StatelessWidget {
         if (index == 0) {
           // Home, no hace nada porque estamos en la HomePage
         } else if (index == 1) {
-          _showAddHabitDialog(); // Mostrar el diálogo de agregar hábito cuando se selecciona "Add"
+          _showAddHabitDialog(
+              context); // Mostrar el diálogo de agregar hábito cuando se selecciona "Add"
         } else if (index == 2) {
           // Perfil: Acción para cerrar sesión
           Get.find<AuthController>().logoutUser(); // Cerrar sesión
@@ -462,14 +463,15 @@ class HomePage extends StatelessWidget {
   }
 
   // Mostrar diálogo para agregar un nuevo hábito
-  void _showAddHabitDialog() {
+  void _showAddHabitDialog(BuildContext context) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController targetController = TextEditingController();
     final TextEditingController unitController = TextEditingController();
-    final TextEditingController emojiController = TextEditingController();
+    final TextEditingController emojiController =
+        TextEditingController(); // Nuevo controlador para el emoji
 
     showDialog(
-      context: Get.context!,
+      context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Add New Habit'),
@@ -502,7 +504,7 @@ class HomePage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Get.back();
+                Get.back(); // Cerrar el diálogo sin agregar
               },
               child: Text('Cancel'),
             ),
@@ -514,13 +516,14 @@ class HomePage extends StatelessWidget {
                     emojiController.text.isNotEmpty) {
                   double? targetValue = double.tryParse(targetController.text);
                   if (targetValue != null) {
-                    habitController.addNewHabit(
+                    // Llamar a la función para agregar el nuevo hábito con el emoji ingresado por el usuario
+                    Get.find<HabitController>().addNewHabit(
                       nameController.text,
                       targetValue,
                       unitController.text,
                       emojiController.text,
                     );
-                    Get.back();
+                    Get.back(); // Cerrar el diálogo
                   } else {
                     Get.snackbar('Error', 'Please enter a valid target value');
                   }
