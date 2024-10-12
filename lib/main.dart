@@ -7,9 +7,9 @@ import 'package:habit_tracker_atomic/presentation/pages/splash/splash_page.dart'
 import 'package:habit_tracker_atomic/presentation/theme/app_theme.dart';
 
 void main() {
+  Get.put(AuthController());
   Get.put(
       HabitController()); // Inyecta el controlador antes de que la aplicación comience
-  Get.put(AuthController());
   runApp(MyApp());
 }
 

@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Saludo personalizado
+  // Sección de saludo
   Widget _buildGreetingSection(BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +99,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Función para mostrar el selector de fechas (calendario)
+  // Mostrar selector de fechas
   void _showDatePicker(BuildContext context) {
     showDatePicker(
       context: context,
@@ -296,12 +296,9 @@ class HomePage extends StatelessWidget {
   // Sección de hábitos
   Widget _buildHabitsSection(bool isDarkMode, BuildContext context) {
     return Obx(() {
-      // Obtener los hábitos del usuario autenticado
-      var currentUserHabits = Get.find<AuthController>().getCurrentUserHabits();
-      print(
-          "Current User Habits: ${currentUserHabits.map((habit) => habit.name).toList()}");
-
-      if (currentUserHabits.isEmpty) {
+      // Obtener los hábitos del usuario para el día seleccionado
+      var habits = habitController.getHabitsForSelectedDay();
+      if (habits.isEmpty) {
         return Text(
           "No habits for today",
           style: TextStyle(
@@ -323,7 +320,7 @@ class HomePage extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Column(
-            children: currentUserHabits.map((habit) {
+            children: habits.map((habit) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Container(
@@ -364,6 +361,17 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       ),
+                      if (habit.isFailed)
+                        Icon(Icons.close, color: Colors.red)
+                      else if (habit.isCompleted || habit.isSkipped)
+                        Icon(Icons.check, color: AppColors.primario)
+                      else
+                        IconButton(
+                          icon: Icon(Icons.add, color: AppColors.primario),
+                          onPressed: () {
+                            _showHabitOptionsDialog(context, habit);
+                          },
+                        ),
                     ],
                   ),
                 ),
@@ -375,7 +383,7 @@ class HomePage extends StatelessWidget {
     });
   }
 
-  // Mostrar opciones de agregar progreso, fallar o saltar hábito
+  // Mostrar diálogo con opciones para el hábito
   void _showHabitOptionsDialog(BuildContext context, Habit habit) {
     showDialog(
       context: context,
@@ -468,7 +476,7 @@ class HomePage extends StatelessWidget {
     final TextEditingController targetController = TextEditingController();
     final TextEditingController unitController = TextEditingController();
     final TextEditingController emojiController =
-        TextEditingController(); // Nuevo controlador para el emoji
+        TextEditingController(); // Controlador para el emoji
 
     showDialog(
       context: context,
@@ -517,7 +525,7 @@ class HomePage extends StatelessWidget {
                   double? targetValue = double.tryParse(targetController.text);
                   if (targetValue != null) {
                     // Llamar a la función para agregar el nuevo hábito con el emoji ingresado por el usuario
-                    Get.find<HabitController>().addNewHabit(
+                    habitController.addNewHabit(
                       nameController.text,
                       targetValue,
                       unitController.text,

@@ -64,6 +64,11 @@ class AuthController extends GetxController {
     return currentUser.value != null;
   }
 
+  // Obtener los hábitos predeterminados del usuario
+  List<Habit> getDefaultHabits() {
+    return currentUser.value?.defaultHabits ?? [];
+  }
+
   // Obtener los hábitos del usuario actual
   List<Habit> getCurrentUserHabits() {
     return currentUser.value?.defaultHabits ?? [];
