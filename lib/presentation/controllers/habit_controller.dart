@@ -32,47 +32,36 @@ class HabitController extends GetxController {
   var habitsByDay = <String, List<Habit>>{}.obs;
   var selectedDay = DateTime.now()
       .obs; // Cambiado a DateTime para seleccionar días específicos
+  var selectedHabits =
+      <Habit>[].obs; // Lista de hábitos seleccionados por el usuario
 
   @override
   void onInit() {
     super.onInit();
-    // Inicializa los hábitos predeterminados para el día actual si no existen
+    // Inicializa los hábitos seleccionados por defecto si no existen para el día actual
     _initializeHabitsForDay(selectedDay.value);
   }
 
-  double calculateCompletedPercentage() {
-    var habits = getHabitsForSelectedDay();
-    if (habits.isEmpty) return 0.0;
-
-    int completedCount =
-        habits.where((habit) => habit.isCompleted || habit.isSkipped).length;
-    return completedCount / habits.length;
+  // Actualiza los hábitos seleccionados
+  void setSelectedHabits(List<Habit> habits) {
+    selectedHabits.value = habits;
   }
 
   // Inicializa los hábitos predeterminados para un día si aún no están establecidos
   void _initializeHabitsForDay(DateTime date) {
     String dayKey = date.toIso8601String();
     if (!habitsByDay.containsKey(dayKey)) {
-      habitsByDay[dayKey] = [
-        Habit(
-            name: 'Drink the water',
-            progress: 0,
-            target: 2000,
-            unit: 'ML',
-            emoji: '💧'),
-        Habit(
-            name: 'Walk',
-            progress: 0,
-            target: 10000,
-            unit: 'STEPS',
-            emoji: '🚶'),
-        Habit(
-            name: 'Water Plants',
-            progress: 0,
-            target: 1,
-            unit: 'TIMES',
-            emoji: '🌿'),
-      ];
+      // Usa los hábitos seleccionados por el usuario si están disponibles
+      habitsByDay[dayKey] = selectedHabits.isNotEmpty
+          ? selectedHabits
+              .map((habit) => Habit(
+                  name: habit.name,
+                  progress: 0,
+                  target: habit.target,
+                  unit: habit.unit,
+                  emoji: habit.emoji))
+              .toList()
+          : [];
     }
   }
 
@@ -131,5 +120,14 @@ class HabitController extends GetxController {
     habit.isFailed = false;
     habit.isCompleted = true;
     habitsByDay.refresh();
+  }
+
+  double calculateCompletedPercentage() {
+    var habits = getHabitsForSelectedDay();
+    if (habits.isEmpty) return 0.0;
+
+    int completedCount =
+        habits.where((habit) => habit.isCompleted || habit.isSkipped).length;
+    return completedCount / habits.length;
   }
 }

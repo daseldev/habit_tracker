@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 import 'package:habit_tracker_atomic/presentation/widgets/appbar/basic_appbar.dart';
+import 'package:habit_tracker_atomic/presentation/pages/home/home_page.dart';
 
 class SelectHabitsPage extends StatefulWidget {
   @override
@@ -49,7 +52,6 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Título
             Text(
               "Choose your first habits",
               style: TextStyle(
@@ -139,10 +141,30 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
             // Botón "Next"
             ElevatedButton(
               onPressed: () {
-                // Acción cuando el usuario seleccione sus hábitos y pulse "Next"
                 if (selectedHabits.isNotEmpty) {
-                  // Realizar alguna acción o navegar a la siguiente pantalla
-                  print('Selected Habits: $selectedHabits');
+                  // Convertimos los hábitos seleccionados en objetos Habit
+                  List<Habit> userSelectedHabits = habits.where((habit) {
+                    return selectedHabits.contains(habit['name']);
+                  }).map((habit) {
+                    return Habit(
+                      name: habit['name']!,
+                      progress: 0,
+                      target:
+                          1, // Puedes ajustar el valor predeterminado de target aquí
+                      unit: 'unit', // Puedes ajustar la unidad por defecto aquí
+                      emoji: habit['emoji']!,
+                    );
+                  }).toList();
+
+                  // Establecemos los hábitos seleccionados en el controlador
+                  Get.find<HabitController>()
+                      .setSelectedHabits(userSelectedHabits);
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(username: 'User')),
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Please select at least one habit')),
