@@ -296,7 +296,6 @@ class HomePage extends StatelessWidget {
   // Sección de hábitos
   Widget _buildHabitsSection(bool isDarkMode, BuildContext context) {
     return Obx(() {
-      // Obtener los hábitos del usuario para el día seleccionado
       var habits = habitController.getHabitsForSelectedDay();
       if (habits.isEmpty) {
         return Text(
@@ -321,58 +320,63 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 10),
           Column(
             children: habits.map((habit) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? AppColors.grisOscuro.withOpacity(0.2)
-                        : AppColors.gris.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(habit.emoji, style: TextStyle(fontSize: 30)),
-                      SizedBox(width: 15),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              habit.name,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isDarkMode
-                                    ? AppColors.fondoClaro
-                                    : AppColors.grisOscuro,
+              return GestureDetector(
+                onTap: () {
+                  _showEditHabitDialog(context, habit); // Editar hábito
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? AppColors.grisOscuro.withOpacity(0.2)
+                          : AppColors.gris.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(habit.emoji, style: TextStyle(fontSize: 30)),
+                        SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                habit.name,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDarkMode
+                                      ? AppColors.fondoClaro
+                                      : AppColors.grisOscuro,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              '${habit.progress}/${habit.target} ${habit.unit}',
-                              style: TextStyle(
-                                color: isDarkMode
-                                    ? AppColors.fondoClaro
-                                    : AppColors.grisOscuro,
+                              SizedBox(height: 5),
+                              Text(
+                                '${habit.progress}/${habit.target} ${habit.unit}',
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? AppColors.fondoClaro
+                                      : AppColors.grisOscuro,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      if (habit.isFailed)
-                        Icon(Icons.close, color: Colors.red)
-                      else if (habit.isCompleted || habit.isSkipped)
-                        Icon(Icons.check, color: AppColors.primario)
-                      else
-                        IconButton(
-                          icon: Icon(Icons.add, color: AppColors.primario),
-                          onPressed: () {
-                            _showHabitOptionsDialog(context, habit);
-                          },
-                        ),
-                    ],
+                        if (habit.isFailed)
+                          Icon(Icons.close, color: Colors.red)
+                        else if (habit.isCompleted || habit.isSkipped)
+                          Icon(Icons.check, color: AppColors.primario)
+                        else
+                          IconButton(
+                            icon: Icon(Icons.add, color: AppColors.primario),
+                            onPressed: () {
+                              _showHabitOptionsDialog(context, habit);
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -381,6 +385,79 @@ class HomePage extends StatelessWidget {
         ],
       );
     });
+  }
+
+  // Mostrar diálogo para editar un hábito
+  void _showEditHabitDialog(BuildContext context, Habit habit) {
+    final TextEditingController nameController =
+        TextEditingController(text: habit.name);
+    final TextEditingController targetController =
+        TextEditingController(text: habit.target.toString());
+    final TextEditingController unitController =
+        TextEditingController(text: habit.unit);
+    final TextEditingController emojiController =
+        TextEditingController(text: habit.emoji);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Habit'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Habit Name'),
+              ),
+              TextField(
+                controller: targetController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Target Value'),
+              ),
+              TextField(
+                controller: unitController,
+                decoration: InputDecoration(labelText: 'Unit'),
+              ),
+              TextField(
+                controller: emojiController,
+                decoration: InputDecoration(labelText: 'Emoji'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back(); // Cerrar el diálogo sin hacer cambios
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.isNotEmpty &&
+                    targetController.text.isNotEmpty &&
+                    unitController.text.isNotEmpty &&
+                    emojiController.text.isNotEmpty) {
+                  // Actualizar el hábito con los nuevos valores
+                  habit.name = nameController.text;
+                  habit.target = double.parse(targetController.text);
+                  habit.unit = unitController.text;
+                  habit.emoji = emojiController.text;
+
+                  habitController.habitsByUserAndDay
+                      .refresh(); // Refrescar el controlador
+
+                  Get.back(); // Cerrar el diálogo
+                } else {
+                  Get.snackbar('Error', 'All fields are required');
+                }
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Mostrar diálogo con opciones para el hábito
@@ -524,7 +601,6 @@ class HomePage extends StatelessWidget {
                     emojiController.text.isNotEmpty) {
                   double? targetValue = double.tryParse(targetController.text);
                   if (targetValue != null) {
-                    // Llamar a la función para agregar el nuevo hábito con el emoji ingresado por el usuario
                     habitController.addNewHabit(
                       nameController.text,
                       targetValue,
