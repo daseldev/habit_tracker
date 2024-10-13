@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 
 class Habit {
   String name;

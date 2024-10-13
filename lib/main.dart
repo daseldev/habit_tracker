@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
 import 'package:habit_tracker_atomic/presentation/pages/splash/splash_page.dart';

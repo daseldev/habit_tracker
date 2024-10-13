@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:habit_tracker_atomic/presentation/controllers/AuthController.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 import 'package:habit_tracker_atomic/presentation/pages/Register/GenderSkinHair_page.dart';
 import 'package:habit_tracker_atomic/presentation/pages/signin/signin_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
