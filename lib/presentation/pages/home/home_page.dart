@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 
 class HomePage extends StatelessWidget {
@@ -41,8 +42,11 @@ class HomePage extends StatelessWidget {
   }
 
   // AppBar personalizada
+// AppBar personalizada
   AppBar _buildAppBar(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final ThemeController themeController = Get.find<ThemeController>();
+
     return AppBar(
       backgroundColor:
           isDarkMode ? AppColors.fondoOscuro : AppColors.fondoClaro,
@@ -57,11 +61,16 @@ class HomePage extends StatelessWidget {
           ),
           Spacer(),
           IconButton(
-            icon: Icon(Icons.notifications,
-                color:
-                    isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro),
+            icon: Icon(
+              isDarkMode
+                  ? Icons.wb_sunny
+                  : Icons
+                      .nightlight_round, // Sol para modo claro, luna para modo oscuro
+              color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+            ),
             onPressed: () {
-              // Acción de notificaciones
+              // Alternar entre modo claro y oscuro
+              themeController.toggleTheme();
             },
           ),
         ],
