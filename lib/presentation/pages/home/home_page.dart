@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
+import 'package:habit_tracker_atomic/presentation/pages/challenges/challenge_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 
 class HomePage extends StatelessWidget {
@@ -235,6 +236,7 @@ class HomePage extends StatelessWidget {
   }
 
   // Sección de desafíos
+  // Sección de desafíos
   Widget _buildChallengeSection(bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,41 +263,49 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: isDarkMode
-                ? AppColors.grisOscuro.withOpacity(0.2)
-                : AppColors.gris.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Best Runners! 🏃‍♂️",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color:
-                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+        GestureDetector(
+          onTap: () {
+            // Navegar hacia la ChallengeDetailPage
+            Get.to(() => ChallengeDetailPage());
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? AppColors.grisOscuro.withOpacity(0.2)
+                  : AppColors.gris.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Best Runners! 🏃‍♂️",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode
+                        ? AppColors.fondoClaro
+                        : AppColors.grisOscuro,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10),
-              LinearProgressIndicator(
-                value: 0.5,
-                backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
-                color: AppColors.primario,
-              ),
-              SizedBox(height: 5),
-              Text(
-                "5 days 13 hours left",
-                style: TextStyle(
-                  color:
-                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+                SizedBox(height: 10),
+                LinearProgressIndicator(
+                  value: 0.5,
+                  backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
+                  color: AppColors.primario,
                 ),
-              ),
-            ],
+                SizedBox(height: 5),
+                Text(
+                  "5 days 13 hours left",
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.fondoClaro
+                        : AppColors.grisOscuro,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
