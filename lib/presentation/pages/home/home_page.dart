@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
+import 'package:habit_tracker_atomic/presentation/controllers/challenge_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
 import 'package:habit_tracker_atomic/presentation/pages/challenges/challenge_page.dart';
@@ -12,6 +13,8 @@ class HomePage extends StatelessWidget {
   HomePage({required this.username});
 
   final HabitController habitController = Get.put(HabitController());
+  final ChallengeController challengeController =
+      Get.put(ChallengeController());
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,6 @@ class HomePage extends StatelessWidget {
   }
 
   // AppBar personalizada
-// AppBar personalizada
   AppBar _buildAppBar(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final ThemeController themeController = Get.find<ThemeController>();
@@ -63,10 +65,7 @@ class HomePage extends StatelessWidget {
           Spacer(),
           IconButton(
             icon: Icon(
-              isDarkMode
-                  ? Icons.wb_sunny
-                  : Icons
-                      .nightlight_round, // Sol para modo claro, luna para modo oscuro
+              isDarkMode ? Icons.wb_sunny : Icons.nightlight_round,
               color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
             ),
             onPressed: () {
@@ -236,7 +235,6 @@ class HomePage extends StatelessWidget {
   }
 
   // Sección de desafíos
-  // Sección de desafíos
   Widget _buildChallengeSection(bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,8 +263,14 @@ class HomePage extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            // Navegar hacia la ChallengeDetailPage
-            Get.to(() => ChallengeDetailPage());
+            if (challengeController.userChallenges.isNotEmpty) {
+              Challenge selectedChallenge =
+                  challengeController.userChallenges.first;
+              Get.to(() => ChallengePage());
+            } else {
+              Get.snackbar(
+                  "No Challenges", "There are no challenges available.");
+            }
           },
           child: Container(
             padding: const EdgeInsets.all(16.0),
@@ -341,7 +345,7 @@ class HomePage extends StatelessWidget {
             children: habits.map((habit) {
               return GestureDetector(
                 onTap: () {
-                  _showEditHabitDialog(context, habit); // Editar hábito
+                  _showEditHabitDialog(context, habit);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -447,7 +451,7 @@ class HomePage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Get.back(); // Cerrar el diálogo sin hacer cambios
+                Get.back();
               },
               child: Text('Cancel'),
             ),
@@ -457,16 +461,13 @@ class HomePage extends StatelessWidget {
                     targetController.text.isNotEmpty &&
                     unitController.text.isNotEmpty &&
                     emojiController.text.isNotEmpty) {
-                  // Actualizar el hábito con los nuevos valores
                   habit.name = nameController.text;
                   habit.target = double.parse(targetController.text);
                   habit.unit = unitController.text;
                   habit.emoji = emojiController.text;
 
-                  habitController.habitsByUserAndDay
-                      .refresh(); // Refrescar el controlador
-
-                  Get.back(); // Cerrar el diálogo
+                  habitController.habitsByUserAndDay.refresh();
+                  Get.back();
                 } else {
                   Get.snackbar('Error', 'All fields are required');
                 }
@@ -533,17 +534,15 @@ class HomePage extends StatelessWidget {
   // Barra de navegación inferior
   Widget _buildBottomNavBar(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: 0, // Página activa (Home por defecto)
+      currentIndex: 0,
       onTap: (index) {
         if (index == 0) {
-          // Home, no hace nada porque estamos en la HomePage
+          // Home
         } else if (index == 1) {
-          _showAddHabitDialog(
-              context); // Mostrar el diálogo de agregar hábito cuando se selecciona "Add"
+          _showAddHabitDialog(context);
         } else if (index == 2) {
-          // Perfil: Acción para cerrar sesión
-          Get.find<AuthController>().logoutUser(); // Cerrar sesión
-          Navigator.pop(context); // Regresar al inicio de sesión
+          Get.find<AuthController>().logoutUser();
+          Navigator.pop(context);
         }
       },
       items: [
@@ -571,8 +570,7 @@ class HomePage extends StatelessWidget {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController targetController = TextEditingController();
     final TextEditingController unitController = TextEditingController();
-    final TextEditingController emojiController =
-        TextEditingController(); // Controlador para el emoji
+    final TextEditingController emojiController = TextEditingController();
 
     showDialog(
       context: context,
@@ -595,20 +593,16 @@ class HomePage extends StatelessWidget {
                 controller: unitController,
                 decoration: InputDecoration(labelText: 'Unit'),
               ),
-              SizedBox(height: 10),
               TextField(
                 controller: emojiController,
-                decoration: InputDecoration(
-                  labelText: 'Emoji',
-                  hintText: 'Enter or paste an emoji',
-                ),
+                decoration: InputDecoration(labelText: 'Emoji'),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Get.back(); // Cerrar el diálogo sin agregar
+                Get.back();
               },
               child: Text('Cancel'),
             ),
@@ -626,7 +620,7 @@ class HomePage extends StatelessWidget {
                       unitController.text,
                       emojiController.text,
                     );
-                    Get.back(); // Cerrar el diálogo
+                    Get.back();
                   } else {
                     Get.snackbar('Error', 'Please enter a valid target value');
                   }
