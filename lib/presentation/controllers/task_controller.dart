@@ -21,6 +21,9 @@ class Task {
 
   // Función para calcular el porcentaje de progreso
   double getProgressPercentage() {
+    if (target == 0) {
+      return isCompleted ? 1.0 : 0.0; // Evitar división por 0
+    }
     return progress / target;
   }
 }
@@ -28,41 +31,30 @@ class Task {
 class TaskController extends GetxController {
   var tasks = <Task>[].obs;
 
-  // Agregar tarea al challenge
   void addTask(String name, double target, String unit) {
     tasks.add(Task(name: name, progress: 0, target: target, unit: unit));
+    tasks.refresh(); // Notificar cambio
   }
 
-  // Agregar progreso a una tarea
   void addProgress(Task task, double value) {
     task.progress += value;
     if (task.progress >= task.target) {
       task.isCompleted = true;
     }
-    tasks.refresh();
+    tasks.refresh(); // Notificar cambio
   }
 
-  // Marcar una tarea como fallida
   void failTask(Task task) {
     task.isFailed = true;
     task.isSkipped = false;
     task.isCompleted = false;
-    tasks.refresh();
+    tasks.refresh(); // Notificar cambio
   }
 
-  // Marcar una tarea como saltada
   void skipTask(Task task) {
     task.isSkipped = true;
     task.isFailed = false;
     task.isCompleted = true;
-    tasks.refresh();
-  }
-
-  // Calcular el porcentaje de tareas completadas
-  double calculateCompletedPercentage() {
-    if (tasks.isEmpty) return 0.0;
-    int completedCount =
-        tasks.where((task) => task.isCompleted || task.isSkipped).length;
-    return completedCount / tasks.length;
+    tasks.refresh(); // Notificar cambio
   }
 }
