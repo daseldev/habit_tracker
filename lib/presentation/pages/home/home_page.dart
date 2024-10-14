@@ -34,7 +34,8 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 20),
               _buildProgressSection(isDarkMode),
               SizedBox(height: 20),
-              _buildChallengeSection(isDarkMode),
+              _buildChallengeSection(
+                  isDarkMode), // Aquí añadimos la sección de challenges
               SizedBox(height: 20),
               _buildHabitsSection(isDarkMode, context),
             ],
@@ -234,7 +235,7 @@ class HomePage extends StatelessWidget {
     });
   }
 
-  // Sección de desafíos
+  // Sección de desafíos (challenges)
   Widget _buildChallengeSection(bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +253,8 @@ class HomePage extends StatelessWidget {
             Spacer(),
             TextButton(
               onPressed: () {
-                // Acción al ver todos los desafíos
+                // Navegación a la página de challenges
+                Get.to(() => ChallengePage());
               },
               child: Text(
                 "View all",
@@ -261,57 +263,70 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: () {
-            if (challengeController.userChallenges.isNotEmpty) {
-              Challenge selectedChallenge =
-                  challengeController.userChallenges.first;
-              Get.to(() => ChallengePage());
-            } else {
-              Get.snackbar(
-                  "No Challenges", "There are no challenges available.");
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.grisOscuro.withOpacity(0.2)
-                  : AppColors.gris.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Best Runners! 🏃‍♂️",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+        Obx(() {
+          var joinedChallenges = challengeController.userChallenges
+              .where((challenge) => challenge.hasJoined)
+              .toList();
+
+          if (joinedChallenges.isEmpty) {
+            return Text(
+              "You haven't joined any challenges yet.",
+              style: TextStyle(
+                color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+              ),
+            );
+          }
+
+          return Column(
+            children: joinedChallenges.map((challenge) {
+              return GestureDetector(
+                onTap: () {
+                  // Aquí podrías añadir la lógica para abrir detalles de un challenge
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  decoration: BoxDecoration(
                     color: isDarkMode
-                        ? AppColors.fondoClaro
-                        : AppColors.grisOscuro,
+                        ? AppColors.grisOscuro.withOpacity(0.2)
+                        : AppColors.gris.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        challenge.name,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDarkMode
+                              ? AppColors.fondoClaro
+                              : AppColors.grisOscuro,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      LinearProgressIndicator(
+                        value: challenge.calculateProgress(),
+                        backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
+                        color: AppColors.primario,
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        "${challenge.tasks.length} tasks",
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? AppColors.fondoClaro
+                              : AppColors.grisOscuro,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 10),
-                LinearProgressIndicator(
-                  value: 0.5,
-                  backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
-                  color: AppColors.primario,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  "5 days 13 hours left",
-                  style: TextStyle(
-                    color: isDarkMode
-                        ? AppColors.fondoClaro
-                        : AppColors.grisOscuro,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+              );
+            }).toList(),
+          );
+        }),
       ],
     );
   }
