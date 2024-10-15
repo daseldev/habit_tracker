@@ -46,7 +46,7 @@
 
 Here’s a quick demo of the Habit Tracker app in action:
 
-![App Demo](assets\Video\Video.gif)
+![App Demo](assets/Video/Video.gif)
 
 
 
