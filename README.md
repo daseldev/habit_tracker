@@ -1,16 +1,30 @@
-# habit_tracker_atomic
+# Habit Tracker App
 
-A new Flutter project.
+**Habit Tracker** es una aplicación de seguimiento de hábitos y desafíos que permite a los usuarios crear y gestionar sus propios hábitos diarios, unirse a desafíos y visualizar su progreso a lo largo del tiempo. Los usuarios pueden configurar hábitos personalizados, unirse a desafíos temáticos, ganar puntos de experiencia y subir de nivel a medida que completan hábitos y tareas.
 
-## Getting Started
+## Índice
 
-This project is a starting point for a Flutter application.
+- [Características](#características)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
 
-A few resources to get you started if this is your first Flutter project:
+## Características
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Registro e Inicio de Sesión**: Los usuarios pueden registrarse y autenticar su cuenta.
+- **Gestión de Hábitos**: Crear, visualizar y seguir hábitos diarios, semanales o mensuales.
+- **Desafíos**: Unirse a desafíos con tareas específicas y llevar un control del progreso.
+- **Puntuación y Experiencia**: Los usuarios ganan puntos de experiencia por completar hábitos y tareas, subiendo de nivel conforme avanzan.
+- **Gráficas de Progreso**: Visualización del progreso de hábitos con gráficas para días, semanas y meses.
+- **Interfaz Modo Claro/Oscuro**: Soporte para temas claro y oscuro, con una experiencia de usuario fluida en ambas opciones.
+- **Resumen de Hábitos**: Sección donde los usuarios pueden ver estadísticas de sus hábitos, como la tasa de éxito, el total de hábitos completados, saltados o fallidos.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Instalación
+
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/tu_usuario/habit_tracker.git
+   cd habit_tracker
+   flutter pub get
+   flutter run
+
