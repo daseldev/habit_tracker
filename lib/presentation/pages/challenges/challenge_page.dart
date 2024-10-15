@@ -60,9 +60,7 @@ class ChallengePage extends StatelessWidget {
               child: Card(
                 margin:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                color: isDarkMode
-                    ? AppColors.grisOscuro.withOpacity(0.2)
-                    : AppColors.gris.withOpacity(0.1),
+                color: AppColors.grisClaro, // Cambié el color a gris claro
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -98,7 +96,7 @@ class ChallengePage extends StatelessWidget {
                         Text(
                           "Challenge Completed!",
                           style: TextStyle(
-                            color: Colors.green,
+                            color: AppColors.verdeCompletado,
                             fontWeight: FontWeight.bold,
                           ),
                         )
@@ -128,6 +126,14 @@ class ChallengePage extends StatelessWidget {
                             );
                           },
                           child: Text("Join Challenge"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primario,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 20),
+                          ),
                         ),
                     ],
                   ),
@@ -155,9 +161,8 @@ class ChallengePage extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.grisOscuro.withOpacity(0.2)
-                  : AppColors.gris.withOpacity(0.1),
+              color: AppColors
+                  .grisClaro, // Ajusté el color de las tareas a gris claro
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -173,8 +178,7 @@ class ChallengePage extends StatelessWidget {
                   radius: 25,
                   backgroundColor: AppColors.primario,
                   child: Text(
-                    _getEmojiForTask(
-                        task.name), // Añadir el emoji correspondiente
+                    _getEmojiForTask(task.name),
                     style: TextStyle(fontSize: 24),
                   ),
                 ),
@@ -188,9 +192,7 @@ class ChallengePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode
-                              ? AppColors.fondoClaro
-                              : AppColors.grisOscuro,
+                          color: AppColors.grisOscuro,
                         ),
                       ),
                       SizedBox(height: 5),
@@ -203,16 +205,14 @@ class ChallengePage extends StatelessWidget {
                       Text(
                         '${task.progress}/${task.target} ${task.unit}',
                         style: TextStyle(
-                          color: isDarkMode
-                              ? AppColors.fondoClaro
-                              : AppColors.grisOscuro,
+                          color: AppColors.grisOscuro,
                         ),
                       ),
                     ],
                   ),
                 ),
                 if (task.isFailed)
-                  Icon(Icons.close, color: Colors.red)
+                  Icon(Icons.close, color: AppColors.rojoError)
                 else if (task.isCompleted || task.isSkipped)
                   Icon(Icons.check, color: AppColors.primario)
                 else
@@ -269,7 +269,7 @@ class ChallengePage extends StatelessWidget {
                 challenge); // Verificar si el challenge está completado
             Get.back();
           },
-          child: Text('Fail'),
+          child: Text('Fail', style: TextStyle(color: AppColors.rojoError)),
         ),
         TextButton(
           onPressed: () {
@@ -278,7 +278,7 @@ class ChallengePage extends StatelessWidget {
                 challenge); // Verificar si el challenge está completado
             Get.back();
           },
-          child: Text('Skip'),
+          child: Text('Skip', style: TextStyle(color: AppColors.gris)),
         ),
         ElevatedButton(
           onPressed: () {
@@ -292,6 +292,13 @@ class ChallengePage extends StatelessWidget {
             }
           },
           child: Text('Add'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primario,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          ),
         ),
       ],
     );
