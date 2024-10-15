@@ -20,6 +20,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    habitController.changeSelectedDay(DateTime.now());
 
     return Scaffold(
       appBar: _buildAppBar(context),
@@ -124,7 +125,7 @@ class HomePage extends StatelessWidget {
     });
   }
 
-  // Selector de fechas
+// Selector de fechas corregido
   Widget _buildDateSelector(bool isDarkMode) {
     return Obx(() {
       final DateTime selectedDate = habitController.selectedDay.value;
@@ -138,11 +139,14 @@ class HomePage extends StatelessWidget {
         'SAT'
       ];
 
+      // Corregir el cálculo del primer día de la semana
+      final DateTime startOfWeek =
+          selectedDate.subtract(Duration(days: selectedDate.weekday % 7));
+
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(7, (index) {
-          final DateTime date =
-              selectedDate.add(Duration(days: index - selectedDate.weekday));
+          final DateTime date = startOfWeek.add(Duration(days: index));
           final String day = weekdays[date.weekday % 7];
 
           return GestureDetector(

@@ -4,14 +4,13 @@ import 'package:fl_chart/fl_chart.dart';
 
 class Habit {
   String name;
-  double progress; // Representa el progreso actual del hábito (0 a 1)
-  double
-      target; // Objetivo total del hábito (por ejemplo, 2000 ML o 10000 PASOS)
-  String unit; // Unidad de medida del progreso (por ejemplo, ML, PASOS)
+  double progress;
+  double target;
+  String unit;
   bool isCompleted;
-  bool isSkipped; // Indica si el hábito fue saltado
-  bool isFailed; // Indica si el hábito fue fallido
-  String emoji; // Agregar propiedad de emoji
+  bool isSkipped;
+  bool isFailed;
+  String emoji;
 
   Habit({
     required this.name,
@@ -24,7 +23,6 @@ class Habit {
     this.emoji = '⚪',
   });
 
-  // Función para calcular el porcentaje de progreso
   double getProgressPercentage() {
     return progress / target;
   }
@@ -52,11 +50,10 @@ class HabitSummary {
 }
 
 class HabitController extends GetxController {
-  var habitsByUserAndDay =
-      <String, List<Habit>>{}.obs; // Hábitos por usuario y día
-  var selectedDay = DateTime.now().obs; // Día actualmente seleccionado
-  var habitSummary = HabitSummary().obs; // Resumen de hábitos
-  var habitGraphData = <FlSpot>[].obs; // Datos para la gráfica de hábitos
+  var habitsByUserAndDay = <String, List<Habit>>{}.obs;
+  var selectedDay = DateTime.now().obs;
+  var habitSummary = HabitSummary().obs;
+  var habitGraphData = <FlSpot>[].obs;
 
   final AuthController authController = Get.find<AuthController>();
 
@@ -66,13 +63,11 @@ class HabitController extends GetxController {
     _initializeHabitsForDay(selectedDay.value);
   }
 
-  // Función para obtener la clave compuesta de usuario y día
   String _getUserDayKey(DateTime date) {
     String username = authController.currentUser.value?.username ?? "unknown";
     return '$username-${date.toIso8601String()}';
   }
 
-  // Función para inicializar los hábitos del día seleccionado
   void _initializeHabitsForDay(DateTime date) {
     String userDayKey = _getUserDayKey(date);
 
@@ -90,19 +85,16 @@ class HabitController extends GetxController {
     }
   }
 
-  // Cambiar el día seleccionado y asegurarse de inicializar los hábitos
   void changeSelectedDay(DateTime day) {
     selectedDay.value = day;
     _initializeHabitsForDay(day);
   }
 
-  // Obtener los hábitos para el día seleccionado
   List<Habit> getHabitsForSelectedDay(DateTime date) {
     String userDayKey = _getUserDayKey(date);
     return habitsByUserAndDay[userDayKey] ?? [];
   }
 
-  // Resumen de hábitos para un intervalo de tiempo seleccionado (día, semana, mes)
   void updateHabitSummary(String interval) {
     if (interval == 'Daily') {
       habitSummary.value = _calculateDailySummaryForDate(selectedDay.value);
@@ -116,7 +108,6 @@ class HabitController extends GetxController {
     }
   }
 
-  // Función para calcular el resumen diario de hábitos
   HabitSummary _calculateDailySummaryForDate(DateTime date) {
     List<Habit> habits = getHabitsForSelectedDay(date);
     if (habits.isEmpty) return HabitSummary();
@@ -134,7 +125,7 @@ class HabitController extends GetxController {
     );
   }
 
-  // Función para calcular el resumen semanal de hábitos
+  // Resumen semanal
   HabitSummary _calculateWeeklySummary() {
     DateTime now = DateTime.now();
     int totalCompleted = 0;
@@ -152,7 +143,6 @@ class HabitController extends GetxController {
       totalHabits += habits.length;
     }
 
-    // Verificamos que totalHabits no sea cero para evitar el NaN
     double successRate = totalHabits > 0 ? totalCompleted / totalHabits : 0.0;
 
     return HabitSummary(
@@ -160,11 +150,11 @@ class HabitController extends GetxController {
       completed: totalCompleted,
       failed: totalFailed,
       skipped: totalSkipped,
-      bestStreak: _calculateBestStreakForWeekly(),
+      bestStreak: _calculateBestStreak(7),
     );
   }
 
-  // Función para calcular el resumen mensual de hábitos
+  // Resumen mensual
   HabitSummary _calculateMonthlySummary() {
     DateTime now = DateTime.now();
     int totalCompleted = 0;
@@ -182,63 +172,85 @@ class HabitController extends GetxController {
       totalHabits += habits.length;
     }
 
-    double successRate = (totalCompleted + totalSkipped) / totalHabits;
+    double successRate = totalHabits > 0 ? totalCompleted / totalHabits : 0.0;
 
     return HabitSummary(
       successRate: successRate,
       completed: totalCompleted,
       failed: totalFailed,
       skipped: totalSkipped,
-      bestStreak: _calculateBestStreakForMonthly(),
+      bestStreak: _calculateBestStreak(30),
     );
   }
 
-  // Función para calcular la mejor racha de hábitos completados
-  int _calculateBestStreakForWeekly() {
-    // Aquí deberías implementar la lógica para calcular la mejor racha de hábitos completados en la última semana
-    return 5; // Cambia esto a la lógica adecuada para calcular la racha
+  // Calcular la mejor racha (streak)
+  int _calculateBestStreak(int days) {
+    int currentStreak = 0;
+    int bestStreak = 0;
+    DateTime now = DateTime.now();
+
+    for (int i = 0; i < days; i++) {
+      DateTime currentDate = now.subtract(Duration(days: i));
+      List<Habit> habits = getHabitsForSelectedDay(currentDate);
+      bool allCompleted = habits.every((habit) => habit.isCompleted);
+
+      if (allCompleted) {
+        currentStreak++;
+      } else {
+        bestStreak = currentStreak > bestStreak ? currentStreak : bestStreak;
+        currentStreak = 0;
+      }
+    }
+
+    return bestStreak;
   }
 
-  int _calculateBestStreakForMonthly() {
-    // Aquí deberías implementar la lógica para calcular la mejor racha de hábitos completados en el último mes
-    return 10; // Cambia esto a la lógica adecuada para calcular la racha
-  }
-
-  // Datos del gráfico diario
+  // Gráficos diarios, semanales y mensuales
   List<FlSpot> _calculateDailyGraphData() {
-    // Datos del gráfico, por ejemplo, del progreso en cada hora del día
-    return [
-      FlSpot(0, 1), // Ejemplo: 1 hábito completado en la primera hora
-      FlSpot(1, 0.5),
-      FlSpot(2, 0.8),
-      FlSpot(3, 0.3),
-    ];
+    final habits = getHabitsForSelectedDay(selectedDay.value);
+
+    List<FlSpot> dailyData = [];
+    for (int hour = 0; hour < 24; hour++) {
+      int habitsCompleted = habits
+          .where((habit) => habit.getProgressPercentage() >= (hour / 24))
+          .length;
+      dailyData.add(FlSpot(hour.toDouble(), habitsCompleted.toDouble()));
+    }
+    return dailyData;
   }
 
-  // Datos del gráfico semanal
   List<FlSpot> _calculateWeeklyGraphData() {
-    return [
-      FlSpot(0, 5), // Ejemplo: 5 hábitos completados en el primer día
-      FlSpot(1, 4),
-      FlSpot(2, 3),
-      FlSpot(3, 6),
-      FlSpot(4, 7),
-      FlSpot(5, 8),
-      FlSpot(6, 5),
-    ];
+    List<FlSpot> weeklyData = [];
+    DateTime now = DateTime.now();
+    for (int i = 0; i < 7; i++) {
+      DateTime day = now.subtract(Duration(days: i));
+      final habits = getHabitsForSelectedDay(day);
+      int habitsCompleted = habits.where((habit) => habit.isCompleted).length;
+      weeklyData.add(FlSpot(i.toDouble(), habitsCompleted.toDouble()));
+    }
+    return weeklyData.reversed.toList();
   }
 
-  // Datos del gráfico mensual
   List<FlSpot> _calculateMonthlyGraphData() {
-    return [
-      FlSpot(0, 20), // Ejemplo: 20 hábitos completados en la primera semana
-      FlSpot(1, 25),
-      FlSpot(2, 15),
-      FlSpot(3, 30),
-    ];
+    List<FlSpot> monthlyData = [];
+    DateTime now = DateTime.now();
+    for (int i = 0; i < 4; i++) {
+      DateTime startOfWeek = now.subtract(Duration(days: i * 7));
+      DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
+      int habitsCompleted = 0;
+
+      for (int j = 0; j < 7; j++) {
+        DateTime currentDay = startOfWeek.add(Duration(days: j));
+        final habits = getHabitsForSelectedDay(currentDay);
+        habitsCompleted += habits.where((habit) => habit.isCompleted).length;
+      }
+
+      monthlyData.add(FlSpot(i.toDouble(), habitsCompleted.toDouble()));
+    }
+    return monthlyData.reversed.toList();
   }
 
-  // Agregar un nuevo hábito al día seleccionado
+  // Agregar nuevo hábito
   void addNewHabit(String name, double target, String unit, String emoji) {
     String userDayKey = _getUserDayKey(selectedDay.value);
     Habit newHabit = Habit(
@@ -252,6 +264,7 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
+  // Añadir progreso
   void addProgress(Habit habit, double value) {
     habit.progress += value;
     if (habit.progress >= habit.target) {
@@ -261,7 +274,6 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
-  // Función para restablecer el progreso de un hábito
   void resetProgress(Habit habit) {
     habit.progress = 0;
     habit.isCompleted = false;
@@ -270,7 +282,6 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
-  // Función para marcar un hábito como fallido
   void failHabit(Habit habit) {
     habit.isFailed = true;
     habit.isSkipped = false;
@@ -278,7 +289,6 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
-  // Función para marcar un hábito como saltado
   void skipHabit(Habit habit) {
     habit.isSkipped = true;
     habit.isFailed = false;
@@ -286,7 +296,6 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
-  // Calcular el porcentaje de hábitos completados para el día seleccionado
   double calculateCompletedPercentage() {
     var habits = getHabitsForSelectedDay(selectedDay.value);
     if (habits.isEmpty) return 0.0;
