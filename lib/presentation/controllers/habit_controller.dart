@@ -118,80 +118,89 @@ class HabitController extends GetxController {
 
   // Función para calcular el resumen diario de hábitos
   HabitSummary _calculateDailySummaryForDate(DateTime date) {
-    List<Habit> habits = getHabitsForSelectedDay(
-        date); // Método que obtiene hábitos para una fecha específica
+    List<Habit> habits = getHabitsForSelectedDay(date);
     if (habits.isEmpty) return HabitSummary();
 
     int completed = habits.where((habit) => habit.isCompleted).length;
     int failed = habits.where((habit) => habit.isFailed).length;
     int skipped = habits.where((habit) => habit.isSkipped).length;
+    double successRate = (completed + skipped) / habits.length;
 
     return HabitSummary(
+      successRate: successRate,
       completed: completed,
       failed: failed,
       skipped: skipped,
     );
   }
 
-  // Función para calcular la mejor racha de hábitos completados
-  int _calculateBestStreak() {
-    // Implementar lógica para calcular la mejor racha de hábitos
-    return 5; // Cambia esto a la lógica adecuada para calcular la racha
-  }
-
   // Función para calcular el resumen semanal de hábitos
   HabitSummary _calculateWeeklySummary() {
-    // Obtener la fecha actual
     DateTime now = DateTime.now();
-
-    // Inicializar contadores
     int totalCompleted = 0;
     int totalFailed = 0;
     int totalSkipped = 0;
+    int totalHabits = 0;
 
-    // Recorrer los últimos 7 días
     for (int i = 0; i < 7; i++) {
       DateTime currentDate = now.subtract(Duration(days: i));
+      List<Habit> habits = getHabitsForSelectedDay(currentDate);
 
-      // Obtener resumen diario para el día actual
-      HabitSummary dailySummary = _calculateDailySummaryForDate(currentDate);
-
-      // Sumar los datos diarios al total semanal
-      totalCompleted += dailySummary.completed;
-      totalFailed += dailySummary.failed;
-      totalSkipped += dailySummary.skipped;
+      totalCompleted += habits.where((habit) => habit.isCompleted).length;
+      totalFailed += habits.where((habit) => habit.isFailed).length;
+      totalSkipped += habits.where((habit) => habit.isSkipped).length;
+      totalHabits += habits.length;
     }
 
-    // Calcular la tasa de éxito semanal
-    double successRate = (totalCompleted + totalSkipped > 0)
-        ? totalCompleted / (totalCompleted + totalSkipped)
-        : 0.0;
+    double successRate = (totalCompleted + totalSkipped) / totalHabits;
 
     return HabitSummary(
-        successRate: successRate,
-        completed: totalCompleted,
-        failed: totalFailed,
-        skipped: totalSkipped,
-        bestStreak:
-            _calculateBestStreakForWeekly() // Aquí puedes calcular la mejor racha semanal
-        );
+      successRate: successRate,
+      completed: totalCompleted,
+      failed: totalFailed,
+      skipped: totalSkipped,
+      bestStreak: _calculateBestStreakForWeekly(),
+    );
   }
 
+  // Función para calcular el resumen mensual de hábitos
+  HabitSummary _calculateMonthlySummary() {
+    DateTime now = DateTime.now();
+    int totalCompleted = 0;
+    int totalFailed = 0;
+    int totalSkipped = 0;
+    int totalHabits = 0;
+
+    for (int i = 0; i < 30; i++) {
+      DateTime currentDate = now.subtract(Duration(days: i));
+      List<Habit> habits = getHabitsForSelectedDay(currentDate);
+
+      totalCompleted += habits.where((habit) => habit.isCompleted).length;
+      totalFailed += habits.where((habit) => habit.isFailed).length;
+      totalSkipped += habits.where((habit) => habit.isSkipped).length;
+      totalHabits += habits.length;
+    }
+
+    double successRate = (totalCompleted + totalSkipped) / totalHabits;
+
+    return HabitSummary(
+      successRate: successRate,
+      completed: totalCompleted,
+      failed: totalFailed,
+      skipped: totalSkipped,
+      bestStreak: _calculateBestStreakForMonthly(),
+    );
+  }
+
+  // Función para calcular la mejor racha de hábitos completados
   int _calculateBestStreakForWeekly() {
     // Aquí deberías implementar la lógica para calcular la mejor racha de hábitos completados en la última semana
     return 5; // Cambia esto a la lógica adecuada para calcular la racha
   }
 
-  // Función para calcular el resumen mensual de hábitos
-  HabitSummary _calculateMonthlySummary() {
-    // Similar a la función semanal, pero aquí agruparías los hábitos por el mes
-    return HabitSummary(
-      successRate: 0.85, // Ejemplo, reemplaza con cálculos reales
-      completed: 90,
-      failed: 10,
-      skipped: 5,
-      bestStreak: 15,
-    );
+  int _calculateBestStreakForMonthly() {
+    // Aquí deberías implementar la lógica para calcular la mejor racha de hábitos completados en el último mes
+    return 10; // Cambia esto a la lógica adecuada para calcular la racha
   }
 
   // Datos del gráfico diario
