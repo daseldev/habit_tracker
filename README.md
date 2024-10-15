@@ -23,8 +23,24 @@
 
 1. Clona este repositorio:
    ```bash
-   git clone https://github.com/tu_usuario/habit_tracker.git
+   git clone https://github.com/daseldev/habit_tracker
    cd habit_tracker
    flutter pub get
    flutter run
+
+## Uso
+
+1. **Registro de usuario**: El usuario debe registrarse proporcionando un nombre de usuario, email, contraseña, género, tono de piel y color de pelo.
+2. **Creación de Hábitos**: Una vez autenticado, el usuario puede seleccionar hábitos predefinidos y gestionar sus hábitos diarios.
+3. **Progreso y desafíos**: Los usuarios pueden unirse a diferentes desafíos y completar tareas para ganar experiencia y monedas virtuales.
+4. **Visualización de Gráficas**: El progreso se visualiza en gráficas diarias, semanales y mensuales para ayudar al usuario a medir su consistencia.
+
+## Tecnologías Utilizadas
+
+- **Flutter**: Framework principal para el desarrollo de la aplicación.
+- **Dart**: Lenguaje de programación utilizado.
+- **GetX**: Gestión de estados, dependencias y rutas.
+- **FL Chart**: Biblioteca para generar gráficas en la app.
+
+
 
