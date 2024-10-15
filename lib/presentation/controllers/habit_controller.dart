@@ -55,7 +55,6 @@ class HabitController extends GetxController {
   var habitsByUserAndDay =
       <String, List<Habit>>{}.obs; // Hábitos por usuario y día
   var selectedDay = DateTime.now().obs; // Día actualmente seleccionado
-  var selectedHabits = <Habit>[].obs; // Lista de hábitos seleccionados
   var habitSummary = HabitSummary().obs; // Resumen de hábitos
   var habitGraphData = <FlSpot>[].obs; // Datos para la gráfica de hábitos
 
@@ -98,15 +97,15 @@ class HabitController extends GetxController {
   }
 
   // Obtener los hábitos para el día seleccionado
-  List<Habit> getHabitsForSelectedDay() {
-    String userDayKey = _getUserDayKey(selectedDay.value);
+  List<Habit> getHabitsForSelectedDay(DateTime date) {
+    String userDayKey = _getUserDayKey(date);
     return habitsByUserAndDay[userDayKey] ?? [];
   }
 
   // Resumen de hábitos para un intervalo de tiempo seleccionado (día, semana, mes)
   void updateHabitSummary(String interval) {
     if (interval == 'Daily') {
-      habitSummary.value = _calculateDailySummary();
+      habitSummary.value = _calculateDailySummaryForDate(selectedDay.value);
       habitGraphData.value = _calculateDailyGraphData();
     } else if (interval == 'Weekly') {
       habitSummary.value = _calculateWeeklySummary();
@@ -118,42 +117,76 @@ class HabitController extends GetxController {
   }
 
   // Función para calcular el resumen diario de hábitos
-  HabitSummary _calculateDailySummary() {
-    List<Habit> habits = getHabitsForSelectedDay();
+  HabitSummary _calculateDailySummaryForDate(DateTime date) {
+    List<Habit> habits = getHabitsForSelectedDay(
+        date); // Método que obtiene hábitos para una fecha específica
     if (habits.isEmpty) return HabitSummary();
 
     int completed = habits.where((habit) => habit.isCompleted).length;
     int failed = habits.where((habit) => habit.isFailed).length;
     int skipped = habits.where((habit) => habit.isSkipped).length;
 
-    double successRate = completed / habits.length;
-
     return HabitSummary(
-      successRate: successRate,
       completed: completed,
       failed: failed,
       skipped: skipped,
-      bestStreak: 5, // Aquí podrías calcular la mejor racha real
     );
+  }
+
+  // Función para calcular la mejor racha de hábitos completados
+  int _calculateBestStreak() {
+    // Implementar lógica para calcular la mejor racha de hábitos
+    return 5; // Cambia esto a la lógica adecuada para calcular la racha
   }
 
   // Función para calcular el resumen semanal de hábitos
   HabitSummary _calculateWeeklySummary() {
-    // Similar a la función diaria, pero aquí agruparías los hábitos por los últimos 7 días
+    // Obtener la fecha actual
+    DateTime now = DateTime.now();
+
+    // Inicializar contadores
+    int totalCompleted = 0;
+    int totalFailed = 0;
+    int totalSkipped = 0;
+
+    // Recorrer los últimos 7 días
+    for (int i = 0; i < 7; i++) {
+      DateTime currentDate = now.subtract(Duration(days: i));
+
+      // Obtener resumen diario para el día actual
+      HabitSummary dailySummary = _calculateDailySummaryForDate(currentDate);
+
+      // Sumar los datos diarios al total semanal
+      totalCompleted += dailySummary.completed;
+      totalFailed += dailySummary.failed;
+      totalSkipped += dailySummary.skipped;
+    }
+
+    // Calcular la tasa de éxito semanal
+    double successRate = (totalCompleted + totalSkipped > 0)
+        ? totalCompleted / (totalCompleted + totalSkipped)
+        : 0.0;
+
     return HabitSummary(
-      successRate: 0.9, // Ejemplo
-      completed: 25,
-      failed: 3,
-      skipped: 2,
-      bestStreak: 7,
-    );
+        successRate: successRate,
+        completed: totalCompleted,
+        failed: totalFailed,
+        skipped: totalSkipped,
+        bestStreak:
+            _calculateBestStreakForWeekly() // Aquí puedes calcular la mejor racha semanal
+        );
+  }
+
+  int _calculateBestStreakForWeekly() {
+    // Aquí deberías implementar la lógica para calcular la mejor racha de hábitos completados en la última semana
+    return 5; // Cambia esto a la lógica adecuada para calcular la racha
   }
 
   // Función para calcular el resumen mensual de hábitos
   HabitSummary _calculateMonthlySummary() {
     // Similar a la función semanal, pero aquí agruparías los hábitos por el mes
     return HabitSummary(
-      successRate: 0.85, // Ejemplo
+      successRate: 0.85, // Ejemplo, reemplaza con cálculos reales
       completed: 90,
       failed: 10,
       skipped: 5,
@@ -245,7 +278,7 @@ class HabitController extends GetxController {
 
   // Calcular el porcentaje de hábitos completados para el día seleccionado
   double calculateCompletedPercentage() {
-    var habits = getHabitsForSelectedDay();
+    var habits = getHabitsForSelectedDay(selectedDay.value);
     if (habits.isEmpty) return 0.0;
 
     int completedCount =

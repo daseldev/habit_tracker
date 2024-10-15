@@ -335,7 +335,8 @@ class HomePage extends StatelessWidget {
   // Sección de hábitos
   Widget _buildHabitsSection(bool isDarkMode, BuildContext context) {
     return Obx(() {
-      var habits = habitController.getHabitsForSelectedDay();
+      var habits = habitController
+          .getHabitsForSelectedDay(habitController.selectedDay.value);
       if (habits.isEmpty) {
         return Text(
           "No habits for today",
