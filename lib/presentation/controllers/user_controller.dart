@@ -10,6 +10,7 @@ class User {
   String hairColor;
   List<Habit> defaultHabits;
   List<Challenge> challenges; // Agregar desafíos al usuario
+  int points;
 
   User({
     required this.username,
@@ -19,6 +20,7 @@ class User {
     required this.skinTone,
     required this.hairColor,
     this.defaultHabits = const [],
-    this.challenges = const [], // Inicializar con una lista vacía de desafíos
+    this.challenges = const [],
+    this.points = 0,
   });
 }

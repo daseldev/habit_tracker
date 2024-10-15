@@ -5,6 +5,7 @@ import 'package:habit_tracker_atomic/presentation/controllers/challenge_controll
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/theme_controller.dart';
 import 'package:habit_tracker_atomic/presentation/pages/challenges/challenge_page.dart';
+import 'package:habit_tracker_atomic/presentation/pages/profile/profile_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 
 class HomePage extends StatelessWidget {
@@ -556,8 +557,7 @@ class HomePage extends StatelessWidget {
         } else if (index == 1) {
           _showAddHabitDialog(context);
         } else if (index == 2) {
-          Get.find<AuthController>().logoutUser();
-          Navigator.pop(context);
+          Get.to(() => ProfilePage());
         }
       },
       items: [

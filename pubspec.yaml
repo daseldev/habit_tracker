@@ -39,6 +39,7 @@ dependencies:
   hydrated_bloc: 
   path_provider:
   get: ^4.6.1
+  fl_chart: ^0.67.0
 
 dev_dependencies:
   flutter_test:
