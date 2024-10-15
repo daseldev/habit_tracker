@@ -20,7 +20,7 @@ class ChallengePage extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
-              color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro),
+              color: isDarkMode ? Colors.white : AppColors.grisOscuro),
           onPressed: () {
             Get.back();
           },
@@ -28,7 +28,7 @@ class ChallengePage extends StatelessWidget {
         title: Text(
           'Challenges',
           style: TextStyle(
-            color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+            color: isDarkMode ? Colors.white : AppColors.grisOscuro,
           ),
         ),
       ),
@@ -40,8 +40,7 @@ class ChallengePage extends StatelessWidget {
             child: Text(
               "No Challenges Available",
               style: TextStyle(
-                  color:
-                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro),
+                  color: isDarkMode ? Colors.white : AppColors.grisOscuro),
             ),
           );
         }
@@ -60,7 +59,9 @@ class ChallengePage extends StatelessWidget {
               child: Card(
                 margin:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                color: AppColors.grisClaro, // Cambié el color a gris claro
+                color: isDarkMode
+                    ? AppColors.fondoOscuro.withOpacity(0.8) // Fondo oscuro
+                    : AppColors.grisClaro,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -71,15 +72,16 @@ class ChallengePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode
-                              ? AppColors.fondoClaro
-                              : AppColors.grisOscuro,
+                          color:
+                              isDarkMode ? Colors.white : AppColors.grisOscuro,
                         ),
                       ),
                       SizedBox(height: 10),
                       LinearProgressIndicator(
                         value: challenge.calculateProgress(),
-                        backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
+                        backgroundColor: isDarkMode
+                            ? Colors.grey.withOpacity(0.3)
+                            : AppColors.grisOscuro.withOpacity(0.3),
                         color: AppColors.primario,
                       ),
                       SizedBox(height: 5),
@@ -87,7 +89,7 @@ class ChallengePage extends StatelessWidget {
                         "${challenge.tasks.length} tasks",
                         style: TextStyle(
                           color: isDarkMode
-                              ? AppColors.fondoClaro
+                              ? Colors.white70
                               : AppColors.grisOscuro,
                         ),
                       ),
@@ -161,8 +163,10 @@ class ChallengePage extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: AppColors
-                  .grisClaro, // Ajusté el color de las tareas a gris claro
+              color: isDarkMode
+                  ? AppColors.fondoOscuro
+                      .withOpacity(0.6) // Fondo oscuro más suave
+                  : AppColors.grisClaro,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -192,20 +196,25 @@ class ChallengePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.grisOscuro,
+                          color:
+                              isDarkMode ? Colors.white : AppColors.grisOscuro,
                         ),
                       ),
                       SizedBox(height: 5),
                       LinearProgressIndicator(
                         value: progressPercentage,
-                        backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
+                        backgroundColor: isDarkMode
+                            ? Colors.grey.withOpacity(0.3)
+                            : AppColors.grisOscuro.withOpacity(0.3),
                         color: AppColors.primario,
                       ),
                       SizedBox(height: 5),
                       Text(
                         '${task.progress}/${task.target} ${task.unit}',
                         style: TextStyle(
-                          color: AppColors.grisOscuro,
+                          color: isDarkMode
+                              ? Colors.white70
+                              : AppColors.grisOscuro,
                         ),
                       ),
                     ],
@@ -234,15 +243,47 @@ class ChallengePage extends StatelessWidget {
   String _getEmojiForTask(String taskName) {
     switch (taskName) {
       case "Run 5K":
-        return "🏃‍♂️";
+        return "🏃‍♂️"; // Emoji para correr
       case "Stretch":
-        return "🧘‍♂️";
+        return "🧘‍♂️"; // Emoji para estiramientos o yoga
+      case "Sprint Intervals":
+        return "🏃‍♀️"; // Emoji para intervalos de sprint
+      case "Cooldown":
+        return "❄️"; // Emoji para enfriamiento
       case "Drink Water":
-        return "💧";
+        return "💧"; // Emoji para beber agua
       case "Rest":
-        return "🛌";
+        return "🛌"; // Emoji para descansar
+      case "Fruits and Veggies":
+        return "🍎"; // Emoji para frutas y verduras
+      case "No Sugary Drinks":
+        return "🥤"; // Emoji para evitar bebidas azucaradas
+      case "Meditate":
+        return "🧘‍♀️"; // Emoji para meditar
+      case "Deep Breathing":
+        return "🌬️"; // Emoji para respiración profunda
+      case "Gratitude Journal":
+        return "📖"; // Emoji para diario de gratitud
+      case "Unplug":
+        return "🔌"; // Emoji para desconectar de la tecnología
+      case "Push-ups":
+        return "💪"; // Emoji para flexiones
+      case "Squats":
+        return "🏋️"; // Emoji para sentadillas
+      case "Planks":
+        return "🤸‍♂️"; // Emoji para planchas
+      case "Rest Day":
+        return "🛌"; // Emoji para día de descanso
+      case "Eat Whole Grains":
+        return "🍞"; // Emoji para comer granos enteros
+      case "No Processed Foods":
+        return "🍔"; // Emoji para evitar alimentos procesados
+      case "Meal Prep":
+        return "🍲"; // Emoji para preparar comidas
+      case "Snack on Nuts":
+        return "🥜"; // Emoji para comer frutos secos
       default:
-        return "✅";
+        return "✅"; // Emoji por defecto
     }
   }
 

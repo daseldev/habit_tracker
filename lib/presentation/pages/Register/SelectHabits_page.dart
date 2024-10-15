@@ -151,7 +151,7 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
                     return Habit(
                       name: habit['name']!,
                       progress: 0,
-                      target: habit['target']!,
+                      target: (habit['target'] as int).toDouble(),
                       unit: habit['unit']!,
                       emoji: habit['emoji']!,
                     );

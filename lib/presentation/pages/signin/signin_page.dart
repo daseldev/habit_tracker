@@ -22,118 +22,125 @@ class _SignInPageState extends State<SignInPage> {
 
     return Scaffold(
       appBar: const BasicAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              width: 100,
-              height: 100,
-            ),
-            SizedBox(height: 40),
-            Text(
-              "Sign In",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+      // Evitamos el overflow cuando el teclado aparece
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
+        // Envolver en SingleChildScrollView
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 40), // Añadimos un espacio al inicio
+              Image.asset(
+                'assets/images/logo.png',
+                width: 100,
+                height: 100,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {},
-              child: Text(
-                "If You Need Any Support Click Here",
+              SizedBox(height: 40),
+              Text(
+                "Sign In",
                 style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.primario,
-                ),
-              ),
-            ),
-            SizedBox(height: 30),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Enter Username Or Email',
-                labelStyle: TextStyle(
-                  color: isDarkMode ? AppColors.gris : AppColors.grisOscuro,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.gris),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.primario),
-                ),
-              ),
-              cursorColor: AppColors.primario,
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                labelStyle: TextStyle(
-                  color: isDarkMode ? AppColors.gris : AppColors.grisOscuro,
-                ),
-                suffixIcon:
-                    Icon(Icons.visibility_off, color: AppColors.grisOscuro),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.gris),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: AppColors.primario),
-                ),
-              ),
-              cursorColor: AppColors.primario,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                if (_usernameController.text.isNotEmpty &&
-                    _passwordController.text.isNotEmpty) {
-                  Get.find<AuthController>().loginUser(
-                    _usernameController.text,
-                    _passwordController.text,
-                  );
-                  if (Get.find<AuthController>().isLoggedIn()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            HomePage(username: _usernameController.text),
-                      ),
-                    );
-                  }
-                } else {
-                  Get.snackbar(
-                      'Error', 'Por favor ingrese los datos de acceso.');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primario,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              ),
-              child: Text(
-                'Sign In',
-                style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color:
+                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {},
+                child: Text(
+                  "If You Need Any Support Click Here",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.primario,
+                  ),
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: 30),
+              TextField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  labelText: 'Enter Username Or Email',
+                  labelStyle: TextStyle(
+                    color: isDarkMode ? AppColors.gris : AppColors.grisOscuro,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: AppColors.gris),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: AppColors.primario),
+                  ),
+                ),
+                cursorColor: AppColors.primario,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: TextStyle(
+                    color: isDarkMode ? AppColors.gris : AppColors.grisOscuro,
+                  ),
+                  suffixIcon:
+                      Icon(Icons.visibility_off, color: AppColors.grisOscuro),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: AppColors.gris),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: AppColors.primario),
+                  ),
+                ),
+                cursorColor: AppColors.primario,
+              ),
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  if (_usernameController.text.isNotEmpty &&
+                      _passwordController.text.isNotEmpty) {
+                    Get.find<AuthController>().loginUser(
+                      _usernameController.text,
+                      _passwordController.text,
+                    );
+                    if (Get.find<AuthController>().isLoggedIn()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              HomePage(username: _usernameController.text),
+                        ),
+                      );
+                    }
+                  } else {
+                    Get.snackbar(
+                        'Error', 'Por favor ingrese los datos de acceso.');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primario,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                ),
+                child: Text(
+                  'Sign In',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
