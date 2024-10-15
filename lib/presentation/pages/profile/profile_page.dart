@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart'; // Librería para gráficos
 import 'package:habit_tracker_atomic/presentation/controllers/auth_controller.dart';
 import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.dart';
+import 'package:habit_tracker_atomic/presentation/pages/LoginORegister/LoginORegister_page.dart'; // Página a la que se redirige después del logout
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -31,6 +32,8 @@ class ProfilePage extends StatelessWidget {
               _buildHabitStatistics(isDarkMode),
               SizedBox(height: 20),
               _buildHabitGraph(isDarkMode),
+              SizedBox(height: 30),
+              _buildLogoutButton(context, isDarkMode), // Botón de cerrar sesión
             ],
           ),
         ),
@@ -87,13 +90,11 @@ class ProfilePage extends StatelessWidget {
                     'Level ${authController.currentUser.value!.level}',
                     style: TextStyle(
                       fontSize: 16,
-                      color: isDarkMode
-                          ? AppColors.fondoClaro
-                          : AppColors.grisOscuro,
+                      color: Colors.blue, // Azul para el nivel
                     ),
                   ),
                   SizedBox(width: 5),
-                  Icon(Icons.arrow_upward, color: AppColors.primario),
+                  Icon(Icons.arrow_upward, color: Colors.blue),
                 ],
               ),
               SizedBox(height: 8),
@@ -110,7 +111,7 @@ class ProfilePage extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
-                        color: AppColors.primario,
+                        color: Colors.blue, // Azul para la experiencia
                         minHeight: 8,
                       ),
                     ),
@@ -119,9 +120,7 @@ class ProfilePage extends StatelessWidget {
                       '${user.experience}/${user.experienceForNextLevel()} XP',
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDarkMode
-                            ? AppColors.fondoClaro
-                            : AppColors.grisOscuro,
+                        color: Colors.blue, // Azul para el texto de experiencia
                       ),
                     ),
                   ],
@@ -130,7 +129,8 @@ class ProfilePage extends StatelessWidget {
               SizedBox(height: 10),
               Row(
                 children: [
-                  Icon(Icons.star, color: Colors.amber),
+                  Icon(Icons.monetization_on,
+                      color: Colors.amber), // Icono de moneda
                   SizedBox(width: 5),
                   Obx(() {
                     return Text(
@@ -311,6 +311,38 @@ class ProfilePage extends StatelessWidget {
         ),
       );
     });
+  }
+
+  // Botón de cerrar sesión
+  Widget _buildLogoutButton(BuildContext context, bool isDarkMode) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          authController.logoutUser();
+          // Redirigir a la página de inicio de sesión
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginORegisterPage()),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              AppColors.primario, // Usamos el color primario para el botón
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        ),
+        child: Text(
+          'Log Out',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // Texto blanco
+          ),
+        ),
+      ),
+    );
   }
 
   // Barra de navegación inferior
