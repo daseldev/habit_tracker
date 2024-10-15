@@ -5,7 +5,6 @@ import 'package:habit_tracker_atomic/presentation/controllers/habit_controller.d
 import 'package:habit_tracker_atomic/presentation/pages/LoginORegister/LoginORegister_page.dart';
 import 'package:habit_tracker_atomic/presentation/theme/app_colors.dart';
 import 'package:habit_tracker_atomic/presentation/widgets/appbar/basic_appbar.dart';
-import 'package:habit_tracker_atomic/presentation/pages/home/home_page.dart';
 
 class SelectHabitsPage extends StatefulWidget {
   @override
@@ -13,31 +12,31 @@ class SelectHabitsPage extends StatefulWidget {
 }
 
 class _SelectHabitsPageState extends State<SelectHabitsPage> {
-  // Lista de hábitos con emojis
-  final List<Map<String, String>> habits = [
-    {'emoji': '💧', 'name': 'Drink water'},
-    {'emoji': '🏃‍♂️', 'name': 'Run'},
-    {'emoji': '📚', 'name': 'Read books'},
-    {'emoji': '🧘‍♂️', 'name': 'Meditate'},
-    {'emoji': '📓', 'name': 'Journal'},
-    {'emoji': '👨‍💻', 'name': 'Study'},
-    {'emoji': '🌱', 'name': 'Gardening'},
-    {'emoji': '💤', 'name': 'Sleep well'},
-    {'emoji': '🚴‍♂️', 'name': 'Cycling'},
-    {'emoji': '🍎', 'name': 'Eat healthy'},
-    {'emoji': '🏋️‍♂️', 'name': 'Workout'},
-    {'emoji': '🎨', 'name': 'Paint'},
-    {'emoji': '🎸', 'name': 'Play guitar'},
-    {'emoji': '✍️', 'name': 'Write'},
-    {'emoji': '🎧', 'name': 'Listen to music'},
-    {'emoji': '🎤', 'name': 'Sing'},
-    {'emoji': '🧹', 'name': 'Clean house'},
-    {'emoji': '🍳', 'name': 'Cook'},
-    {'emoji': '🎮', 'name': 'Play games'},
-    {'emoji': '🎻', 'name': 'Play violin'},
-    {'emoji': '🚶‍♂️', 'name': 'Walk'},
-    {'emoji': '📖', 'name': 'Study languages'},
-    {'emoji': '📅', 'name': 'Plan your day'},
+  // Lista de hábitos con emojis, unidades y objetivos
+  final List<Map<String, dynamic>> habits = [
+    {'emoji': '💧', 'name': 'Drink water', 'unit': 'ML', 'target': 2000},
+    {'emoji': '🏃‍♂️', 'name': 'Run', 'unit': 'Kilometers', 'target': 5},
+    {'emoji': '📚', 'name': 'Read books', 'unit': 'Pages', 'target': 30},
+    {'emoji': '🧘‍♂️', 'name': 'Meditate', 'unit': 'Minutes', 'target': 10},
+    {'emoji': '📓', 'name': 'Journal', 'unit': 'Entries', 'target': 1},
+    {'emoji': '👨‍💻', 'name': 'Study', 'unit': 'Hours', 'target': 2},
+    {'emoji': '🌱', 'name': 'Gardening', 'unit': 'Minutes', 'target': 30},
+    {'emoji': '💤', 'name': 'Sleep well', 'unit': 'Hours', 'target': 8},
+    {'emoji': '🚴‍♂️', 'name': 'Cycling', 'unit': 'Kilometers', 'target': 10},
+    {'emoji': '🍎', 'name': 'Eat healthy', 'unit': 'Meals', 'target': 3},
+    {'emoji': '🏋️‍♂️', 'name': 'Workout', 'unit': 'Minutes', 'target': 45},
+    {'emoji': '🎨', 'name': 'Paint', 'unit': 'Hours', 'target': 1},
+    {'emoji': '🎸', 'name': 'Play guitar', 'unit': 'Minutes', 'target': 30},
+    {'emoji': '✍️', 'name': 'Write', 'unit': 'Words', 'target': 500},
+    {'emoji': '🎧', 'name': 'Listen to music', 'unit': 'Minutes', 'target': 20},
+    {'emoji': '🎤', 'name': 'Sing', 'unit': 'Minutes', 'target': 15},
+    {'emoji': '🧹', 'name': 'Clean house', 'unit': 'Rooms', 'target': 2},
+    {'emoji': '🍳', 'name': 'Cook', 'unit': 'Meals', 'target': 2},
+    {'emoji': '🎮', 'name': 'Play games', 'unit': 'Minutes', 'target': 60},
+    {'emoji': '🎻', 'name': 'Play violin', 'unit': 'Minutes', 'target': 30},
+    {'emoji': '🚶‍♂️', 'name': 'Walk', 'unit': 'Steps', 'target': 10000},
+    {'emoji': '📖', 'name': 'Study languages', 'unit': 'Minutes', 'target': 30},
+    {'emoji': '📅', 'name': 'Plan your day', 'unit': 'Tasks', 'target': 3},
   ];
 
   // Lista de hábitos seleccionados
@@ -152,9 +151,8 @@ class _SelectHabitsPageState extends State<SelectHabitsPage> {
                     return Habit(
                       name: habit['name']!,
                       progress: 0,
-                      target:
-                          1, // Puedes ajustar el valor predeterminado de target aquí
-                      unit: 'unit', // Puedes ajustar la unidad por defecto aquí
+                      target: habit['target']!,
+                      unit: habit['unit']!,
                       emoji: habit['emoji']!,
                     );
                   }).toList();

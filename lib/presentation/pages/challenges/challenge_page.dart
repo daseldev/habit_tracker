@@ -94,7 +94,15 @@ class ChallengePage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 5),
-                      if (challengeController.isChallengeJoined(challenge))
+                      if (challenge.isCompleted)
+                        Text(
+                          "Challenge Completed!",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      else if (challengeController.isChallengeJoined(challenge))
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -211,7 +219,7 @@ class ChallengePage extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.add, color: AppColors.primario),
                     onPressed: () {
-                      _showTaskOptionsDialog(task);
+                      _showTaskOptionsDialog(task, challenge);
                     },
                   ),
               ],
@@ -239,7 +247,7 @@ class ChallengePage extends StatelessWidget {
   }
 
   // Diálogo para actualizar el progreso de una tarea
-  void _showTaskOptionsDialog(Task task) {
+  void _showTaskOptionsDialog(Task task, Challenge challenge) {
     final TextEditingController progressController = TextEditingController();
 
     Get.defaultDialog(
@@ -257,6 +265,8 @@ class ChallengePage extends StatelessWidget {
         TextButton(
           onPressed: () {
             taskController.failTask(task);
+            challengeController.checkChallengeCompletion(
+                challenge); // Verificar si el challenge está completado
             Get.back();
           },
           child: Text('Fail'),
@@ -264,6 +274,8 @@ class ChallengePage extends StatelessWidget {
         TextButton(
           onPressed: () {
             taskController.skipTask(task);
+            challengeController.checkChallengeCompletion(
+                challenge); // Verificar si el challenge está completado
             Get.back();
           },
           child: Text('Skip'),
@@ -274,6 +286,8 @@ class ChallengePage extends StatelessWidget {
               double progressValue =
                   double.tryParse(progressController.text) ?? 0;
               taskController.addProgress(task, progressValue);
+              challengeController.checkChallengeCompletion(
+                  challenge); // Verificar si el challenge está completado
               Get.back();
             }
           },

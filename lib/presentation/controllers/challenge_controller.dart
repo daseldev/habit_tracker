@@ -25,6 +25,12 @@ class Challenge {
     int completedTasks = tasks.where((task) => task.isCompleted).length;
     return completedTasks / tasks.length;
   }
+
+  // Verificar si el desafío está completado
+  bool checkIfCompleted() {
+    return tasks
+        .every((task) => task.isCompleted); // Todas las tareas completadas
+  }
 }
 
 class ChallengeController extends GetxController {
@@ -140,5 +146,23 @@ class ChallengeController extends GetxController {
   // Verificar si el usuario ya está unido a un desafío
   bool isChallengeJoined(Challenge challenge) {
     return challenge.hasJoined;
+  }
+
+  // Verificar si el desafío está completado
+  void checkChallengeCompletion(Challenge challenge) {
+    if (challenge.checkIfCompleted()) {
+      challenge.isCompleted = true;
+      authController.currentUser.value?.addGold(); // Añadir moneda de oro
+      Get.snackbar(
+          'Challenge Completed', '${challenge.name} has been completed!');
+    }
+    userChallenges.refresh();
+  }
+
+  // Método que se llama cuando el progreso de una tarea cambia
+  void updateTaskProgress(Task task, Challenge challenge) {
+    taskController.addProgress(task, task.progress);
+    checkChallengeCompletion(
+        challenge); // Revisar si el desafío está completado después de actualizar la tarea
   }
 }

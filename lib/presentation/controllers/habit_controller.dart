@@ -124,7 +124,7 @@ class HabitController extends GetxController {
     int completed = habits.where((habit) => habit.isCompleted).length;
     int failed = habits.where((habit) => habit.isFailed).length;
     int skipped = habits.where((habit) => habit.isSkipped).length;
-    double successRate = (completed + skipped) / habits.length;
+    double successRate = (completed - skipped) / habits.length;
 
     return HabitSummary(
       successRate: successRate,
@@ -152,7 +152,8 @@ class HabitController extends GetxController {
       totalHabits += habits.length;
     }
 
-    double successRate = (totalCompleted + totalSkipped) / totalHabits;
+    // Verificamos que totalHabits no sea cero para evitar el NaN
+    double successRate = totalHabits > 0 ? totalCompleted / totalHabits : 0.0;
 
     return HabitSummary(
       successRate: successRate,
@@ -251,11 +252,11 @@ class HabitController extends GetxController {
     habitsByUserAndDay.refresh();
   }
 
-  // Función para agregar progreso a un hábito del día seleccionado
   void addProgress(Habit habit, double value) {
     habit.progress += value;
     if (habit.progress >= habit.target) {
       habit.isCompleted = true;
+      authController.currentUser.value?.addExperience(10); // Añadir experiencia
     }
     habitsByUserAndDay.refresh();
   }

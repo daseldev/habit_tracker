@@ -66,36 +66,87 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         SizedBox(width: 20),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              username,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+        Expanded(
+          // Usamos Expanded para que tome el ancho disponible
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                username,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color:
+                      isDarkMode ? AppColors.fondoClaro : AppColors.grisOscuro,
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.star, color: Colors.amber),
-                SizedBox(width: 5),
-                Obx(() {
-                  return Text(
-                    '${authController.currentUser.value!.points} Points',
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    'Level ${authController.currentUser.value!.level}',
                     style: TextStyle(
                       fontSize: 16,
                       color: isDarkMode
                           ? AppColors.fondoClaro
                           : AppColors.grisOscuro,
                     ),
-                  );
-                }),
-              ],
-            ),
-          ],
+                  ),
+                  SizedBox(width: 5),
+                  Icon(Icons.arrow_upward, color: AppColors.primario),
+                ],
+              ),
+              SizedBox(height: 8),
+              Obx(() {
+                final user = authController.currentUser.value!;
+                final progress =
+                    user.experience / user.experienceForNextLevel();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Barra de experiencia
+                    SizedBox(
+                      width: double.infinity, // Ocupa todo el ancho disponible
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        backgroundColor: AppColors.grisOscuro.withOpacity(0.3),
+                        color: AppColors.primario,
+                        minHeight: 8,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      '${user.experience}/${user.experienceForNextLevel()} XP',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDarkMode
+                            ? AppColors.fondoClaro
+                            : AppColors.grisOscuro,
+                      ),
+                    ),
+                  ],
+                );
+              }),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Icon(Icons.star, color: Colors.amber),
+                  SizedBox(width: 5),
+                  Obx(() {
+                    return Text(
+                      '${authController.currentUser.value!.points} Gold Coins',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDarkMode
+                            ? AppColors.fondoClaro
+                            : AppColors.grisOscuro,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
